@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}California Fish Plants • CDFW{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-xl-5">
+        <div class="card p-5">
+            <div class="text-center mb-4">
+                <h1 class="mb-3">California Fish Plants</h1>
+                <p class="text-muted">Find the latest CDFW stocking schedule by county</p>
+            </div>
+
+            {% if error %}
+            <div class="alert alert-danger mb-4">{{ error }}</div>
+            {% endif %}
+
+            <form action="/results" method="get">
+                <div class="mb-4">
+                    <label for="county" class="form-label fs-5 text-success fw-bold">Select County</label>
+                    <select name="county" id="county" class="form-select form-select-lg" required>
+                        <option value="" disabled selected>Type or select a county...</option>
+                        {% for c in counties %}
+                        <option value="{{ c }}">{{ c }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg w-100">
+                    Show Stocking Schedule
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    new TomSelect("#county", {
+        placeholder: "Type county name...",
+        sortField: { field: "text", direction: "asc" },
+        maxOptions: 58
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}{{ county }} County • Fish Plants{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-xl-7">
+        <div class="card p-4 p-md-5">
+            <h1 class="text-center mb-2">{{ county }} County</h1>
+            <p class="text-center text-muted mb-4">Fish Planting Schedule • As of {{ today }}</p>
+
+            {% if results %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Body of Water</th>
+                            <th>Most Recent Plant</th>
+                            <th>Next Planned Plant</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for water, data in results.items() %}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('map_view', county=county, water=water | urlencode) }}">
+                                    <strong class="text-success">{{ water }}</strong>
+                                </a>
+                            </td>
+                            <td>
+                                {% if data.recent %}
+                                    <span class="badge bg-success mb-1">{{ data.recent.week }}</span><br>
+                                    <span class="text-dark">{{ data.recent.species }}</span>
+                                {% else %}
+                                    <em class="text-muted">No recent plants</em>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if data.upcoming %}
+                                    <span class="badge bg-info mb-1">{{ data.upcoming.week }}</span><br>
+                                    <span class="text-dark">{{ data.upcoming.species }}</span>
+                                {% else %}
+                                    <em class="text-muted">None scheduled</em>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-center py-5">No stocking data found for {{ county }} County.</p>
+            {% endif %}
+
+            <div class="text-center mt-4">
+                <a href="/" class="btn btn-primary btn-lg px-5">Search Another County</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

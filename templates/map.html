@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}{{ water }} Map • {{ county }} County{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-xl-7">
+        <div class="card p-4 p-md-5">
+            <h1 class="text-center mb-2">{{ water }}</h1>
+            <p class="text-center text-muted mb-4">{{ county }} County • Approximate Location</p>
+
+            {% if message %}
+            <div class="alert alert-info text-center mb-4">
+                <strong>Location note:</strong> {{ message }}
+            </div>
+            {% endif %}
+
+            <div id="map"></div>
+
+            <div class="text-center mt-4">
+                <a href="/results?county={{ county | urlencode }}" class="btn btn-outline-success btn-lg px-5">
+                    Back to Results
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Safely inject Flask variables into JavaScript using |tojson
+        const lat = {{ lat | tojson }};
+        const lon = {{ lon | tojson }};
+        const water = {{ water | tojson }};
+        const county = {{ county | tojson }};
+
+        // Fallback values (only used if something went wrong server-side)
+        const defaultLat = 36.7783;
+        const defaultLon = -119.4179;
+
+        // Use real coordinates if valid, otherwise fallback
+        const finalLat = (typeof lat === 'number' && !isNaN(lat)) ? lat : defaultLat;
+        const finalLon = (typeof lon === 'number' && !isNaN(lon)) ? lon : defaultLon;
+
+        try {
+            // Initialize map
+            const map = L.map('map').setView([finalLat, finalLon], 13);
+
+            // Add OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 19
+            }).addTo(map);
+
+            // Add marker + popup
+            L.marker([finalLat, finalLon])
+                .addTo(map)
+                .bindPopup(`
+                    <div style="text-align:center;">
+                        <strong style="font-size:1.1em;">${water || 'Location'}</strong><br>
+                        ${county ? county + ' County' : ''}
+                    </div>
+                `)
+                .openPopup();
+
+            // Nice zoom to marker
+            map.fitBounds(L.latLng(finalLat, finalLon).toBounds(1000));
+
+        } catch (err) {
+            console.error('Map failed to load:', err);
+            document.getElementById('map').innerHTML = 
+                '<div class="alert alert-danger text-center p-4">Map could not be loaded.</div>';
+        }
+    });
+</script>
+{% endblock %}
