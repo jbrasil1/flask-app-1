@@ -1,5 +1,0 @@
-1. “create a flask app that searches the cdfw planting website for the county entered by the user. make sure to enter the county name into the county box, and then hit search, then filter the plants by ‘all plants’. I want the app to return the most recent plant, and the next planned plant (if available) for each body of water on that date. make the app look appealing to the eye”
-2. “The ‘water body in map’ text is not needed in the results; can you remove it but keep everything else the same”
-3. “View Water Body in Map is still in the body of water results. in the cdfw website there is a globe symbol that you are reading, do not read that so the View Water Body in Map text is not returned”
-4. “can you now add an autofill option for the counties to ensure the user can select the correct county”
-5. “can you change the colors to make them a little more nature like”
